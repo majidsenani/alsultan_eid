@@ -107,6 +107,23 @@
             margin: 22px 0;
         }
 
+        .counter-box {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 20px;
+            background: rgba(201,168,76,0.1);
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 30px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .counter-box span {
+            color: #C9A84C;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
         .input-group { margin-bottom: 14px; }
 
         .input-group input,
@@ -201,6 +218,7 @@
         <h1>🌙 بطاقات تهنئة العيد</h1>
         <div class="family-name">عائلة السلطان</div>
         <p>صمّم بطاقتك الخاصة في ثوانٍ</p>
+        <div class="counter-box">🖨️ <span id="printCount">...</span></div>
     </div>
 
     <div class="divider"></div>
@@ -220,7 +238,19 @@
     const TEMPLATE_SRC   = 'https://raw.githubusercontent.com/majidsenani/alsultan_eid/main/eid2.jpg';
     const TEMPLATE_COLOR = '#C9A84C';
     const TEMPLATE_Y     = 0.84;
-    const API_URL        = "https://sheetdb.io/api/v1/o9rk5zcf0ti1x";
+    const API_URL        = "https://sheetdb.io/api/v1/0t1ytwdhd4d51";
+
+    // تحميل عدد الطباعات
+    async function loadCount() {
+        try {
+            const res = await fetch(API_URL + '/count');
+            const data = await res.json();
+            document.getElementById('printCount').textContent = data.rows;
+        } catch(e) {
+            document.getElementById('printCount').textContent = '—';
+        }
+    }
+    loadCount();
 
     // شعار العائلة للرسم على البطاقة
     const LOGO_IMG = new Image();
@@ -246,10 +276,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                "الاسم": name,
-                "الملاحظة": note,
-                "رقم القالب": 2,
-                "التاريخ": new Date().toLocaleString('ar-EG')
+                "الاسم": name
             })
         }).catch(() => {});
 
@@ -291,6 +318,7 @@
 
             btn.textContent = '🎉 صمّم بطاقتك الآن';
             btn.disabled = false;
+            loadCount();
             document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         };
 
